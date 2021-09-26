@@ -41,13 +41,11 @@ export class AuthService {
     attributeList.push(attributeEmail);
     // null: additional validation to validate input on server
     // callback func: execute when Cognito is done
-    userPool.signUp('username', 'password', attributeList, null, function (
-      err,
-      result
-    ) {
+    userPool.signUp(username, password, attributeList, null, (err, result) => {
       if (err) {
         this.authDidFail.next(true);
         this.authIsLoading.next(false);
+        alert(err.message || JSON.stringify(err));
         return;
       }
       this.authDidFail.next(false);
