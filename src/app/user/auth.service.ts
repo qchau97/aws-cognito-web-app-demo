@@ -58,7 +58,22 @@ export class AuthService {
     this.authIsLoading.next(true);
     const userData = {
       Username: username,
+      Pool: userPool,
     };
+    const cognitoUser = new CognitoUser(userData);
+    // code: "forceAliasCreation" in case email already existed then it will be migrated into the "code"
+    cognitoUser.confirmRegistration(code, true, (err, result) => {
+      if (err) {
+        this.authDidFail.next(true);
+        this.authIsLoading.next(false);
+        alert(code);
+        alert(err.message || JSON.stringify(err));
+        return;
+      }
+      this.authDidFail.next(false);
+      this.authIsLoading.next(false);
+      this.router.navigate(['/']);
+    });
   }
   signIn(username: string, password: string): void {
     this.authIsLoading.next(true);
