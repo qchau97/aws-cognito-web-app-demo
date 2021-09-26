@@ -108,8 +108,10 @@ export class AuthService {
     return;
   }
   getAuthenticatedUser() {
+    return userPool.getCurrentUser();
   }
   logout() {
+    this.getAuthenticatedUser().signOut();
     this.authStatusChanged.next(false);
   }
   isAuthenticated(): Observable<boolean> {
@@ -118,7 +120,18 @@ export class AuthService {
       if (!user) {
         observer.next(false);
       } else {
-        observer.next(false);
+        user.getSession(function (err, session: CognitoUserSession) {
+          if (err) {
+            observer.next(false);
+            alert(err.message || JSON.stringify(err));
+          } else {
+            if (session.isValid()) {
+              observer.next(true);
+            } else {
+              observer.next(false);
+            }
+          }
+        })
       }
       observer.complete();
     });
