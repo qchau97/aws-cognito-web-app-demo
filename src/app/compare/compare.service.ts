@@ -6,6 +6,7 @@ import 'rxjs/add/operator/map';
 
 import { CompareData } from './compare-data.model';
 import { AuthService } from '../user/auth.service';
+import { CognitoUserSession } from 'amazon-cognito-identity-js';
 
 @Injectable()
 export class CompareService {
@@ -23,8 +24,13 @@ export class CompareService {
     this.dataIsLoading.next(true);
     this.dataEdited.next(false);
     this.userData = data;
-      this.http.post('https://API_ID.execute-api.REGION.amazonaws.com/dev/', data, {
-        headers: new Headers({'Authorization': 'XX'})
+    this.authService.getAuthenticatedUser().getSession((err, session: CognitoUserSession) => {
+      if (err) {
+        alert(err.message || JSON.stringify(err));
+        return;
+      }
+      this.http.post('https://52lrhfa07a.execute-api.us-west-2.amazonaws.com/dev/compare-yourself', data, {
+        headers: new Headers({ 'Authorization': session.getIdToken().getJwtToken() })
       })
         .subscribe(
           (result) => {
@@ -38,6 +44,7 @@ export class CompareService {
             this.dataEdited.next(false);
           }
         );
+    });
   }
   onRetrieveData(all = true) {
     this.dataLoaded.next(null);
