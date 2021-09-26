@@ -88,14 +88,22 @@ export class CompareService {
   }
   onDeleteData() {
     this.dataLoadFailed.next(false);
-      this.http.delete('https://API_ID.execute-api.REGION.amazonaws.com/dev/', {
-        headers: new Headers({'Authorization': 'XXX'})
+    this.authService.getAuthenticatedUser().getSession((err, session: CognitoUserSession) => {
+      if (err) {
+        alert(err.message || JSON.stringify(err));
+        return;
+      }
+      const queryParam = '?accessToken=' + session.getAccessToken().getJwtToken();
+      this.http.delete('https://52lrhfa07a.execute-api.us-west-2.amazonaws.com/dev/compare-yourself/' + queryParam, {
+        headers: new Headers({ 'Authorization': session.getIdToken().getJwtToken() })
       })
         .subscribe(
           (data) => {
             console.log(data);
+            alert('Delete data successfully. Status code: ' + data.status);
           },
           (error) => this.dataLoadFailed.next(true)
         );
+    });
   }
 }
