@@ -26,3 +26,9 @@ Before running the tests make sure you are serving the app via `ng serve`.
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## Upload the Web App to Amazon S3 Bucket
+
+Run `npm install @angular/cli@1.4` if you're using global Angular CLI whose version is greater than specified in the project's `devDependencies`.
+Build the project in production mode.
+Create an S3 Bucket and upload all files in the `dist/` directory to this Bucket.
